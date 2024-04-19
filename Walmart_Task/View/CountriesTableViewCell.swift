@@ -13,6 +13,8 @@ class CountriesTableViewCell: UITableViewCell {
     private lazy var nameLabel: UILabel = {
         let view = UILabel()
         view.textColor = .black
+        view.numberOfLines = 1
+        view.lineBreakMode = .byWordWrapping
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -54,25 +56,30 @@ class CountriesTableViewCell: UITableViewCell {
         contentView.addSubview(codeLabel)
         contentView.addSubview(capitalLabel)
         
+        
+        let nameLabelTrailingConstraint = nameLabel.trailingAnchor.constraint(equalTo: regionLabel.leadingAnchor, constant: -5)
+        nameLabelTrailingConstraint.priority = .defaultHigh // Lower priority than required
+
         NSLayoutConstraint.activate([
             nameLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
-            nameLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 5),
+            nameLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5),
             
             regionLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
-            regionLabel.leftAnchor.constraint(equalTo: nameLabel.rightAnchor, constant: 10),
+            regionLabel.leadingAnchor.constraint(equalTo: nameLabel.trailingAnchor, constant: 10),
+            regionLabel.trailingAnchor.constraint(lessThanOrEqualTo: codeLabel.leadingAnchor, constant: -3),
             
             codeLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
-            codeLabel.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -25),
+            codeLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -25),
             
             capitalLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 8),
-            capitalLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 5)
+            capitalLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5)
         ])
     }
     
-    func setUp(_ item: Country) {
-        nameLabel.text = item.name
-        regionLabel.text = item.region.rawValue
-        codeLabel.text = item.code
-        capitalLabel.text = item.capital
+    func setUp(_ item: Country?) {
+        nameLabel.text = item?.name
+        regionLabel.text = item?.region.rawValue
+        codeLabel.text = item?.code
+        capitalLabel.text = item?.capital
     }
 }

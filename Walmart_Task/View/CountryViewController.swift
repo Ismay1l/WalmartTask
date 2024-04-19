@@ -9,8 +9,8 @@ import UIKit
 
 class CountryViewController: UIViewController {
     
-    private let viewmodel = SearchViewModel()
-    private var filteredCountries: [Country] = []
+    private let viewModel = SearchViewModel(countryService: Dependencies(service: CountryService()))
+    private var filteredCountries: [Country]? = []
     
     private lazy var searchController: UISearchController = {
         let searchController = UISearchController()
@@ -48,12 +48,21 @@ class CountryViewController: UIViewController {
         setUpView()
         fetchData()
     }
+}
+
+extension CountryViewController {
     
     private func fetchData() {
-        viewmodel.fetchData { [weak self] countries in
+        viewModel.fetchCountryList { [weak self] countries in
             self?.filteredCountries = countries
             DispatchQueue.main.async {
                 self?.countriesTableView.reloadData()
+            }
+        } errorMessage: { [weak self] message in
+            if !message.isEmpty {
+                DispatchQueue.main.async {
+                    self?.showErrorAlert(message: message)
+                }
             }
         }
       }
@@ -76,16 +85,23 @@ class CountryViewController: UIViewController {
         }
         navigationItem.searchController = searchController
     }
+    
+    private func showErrorAlert(message: String) {
+        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "OK", style: .default)
+        alert.addAction(okAction)
+        present(alert, animated: true)
+    }
 }
 
 extension CountryViewController: UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return filteredCountries.count
+        return filteredCountries?.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: Constants.countryTableViewCellID.identifier) as! CountriesTableViewCell
-        let item = filteredCountries[indexPath.row]
+        let item = filteredCountries?[indexPath.row]
         cell.backgroundColor = .white
         cell.selectionStyle = .none
         cell.setUp(item)
@@ -97,9 +113,9 @@ extension CountryViewController: UITableViewDelegate, UITableViewDataSource, UIS
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        filteredCountries = searchText.isEmpty ? viewmodel.countries : viewmodel.countries.filter { country in
+        filteredCountries = searchText.isEmpty ? viewModel.countries : viewModel.countries.filter({ country in
             return country.name.localizedCaseInsensitiveContains(searchText) || country.capital.localizedCaseInsensitiveContains(searchText)
-        }
+        })
         countriesTableView.reloadData()
     }
 }

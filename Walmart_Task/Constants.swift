@@ -6,3 +6,16 @@
 //
 
 import Foundation
+
+//MARK: CollectionViewIDs
+enum Constants: String {
+    
+    case countryTableViewCellID
+
+    var identifier: String {
+        switch self {
+        case .countryTableViewCellID:
+            return "country_table_View_cell_ID"
+        }
+    }
+}
