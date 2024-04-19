@@ -14,7 +14,6 @@ class CountryViewController: UIViewController {
     
     private lazy var searchController: UISearchController = {
         let searchController = UISearchController()
-        searchController.searchBar.placeholder = "Search name or capital..."
         searchController.searchBar.searchBarStyle = .minimal
         searchController.obscuresBackgroundDuringPresentation = false
         navigationItem.searchController = searchController
@@ -117,6 +116,10 @@ extension CountryViewController: UITableViewDelegate, UITableViewDataSource, UIS
             return country.name.localizedCaseInsensitiveContains(searchText) || country.capital.localizedCaseInsensitiveContains(searchText)
         })
         countriesTableView.reloadData()
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        fetchData()
     }
 }
 
