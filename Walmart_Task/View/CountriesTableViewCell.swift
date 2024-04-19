@@ -58,7 +58,7 @@ class CountriesTableViewCell: UITableViewCell {
         
         
         let nameLabelTrailingConstraint = nameLabel.trailingAnchor.constraint(equalTo: regionLabel.leadingAnchor, constant: -5)
-        nameLabelTrailingConstraint.priority = .defaultHigh // Lower priority than required
+        nameLabelTrailingConstraint.priority = .defaultHigh
 
         NSLayoutConstraint.activate([
             nameLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
